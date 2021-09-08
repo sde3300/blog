@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="btc.mapper.VueBoardMapper">
+	<select id="vueSelectBoardList" resultType="btc.dto.AxiosBoardDto">
+		<![CDATA[
+			SELECT
+				seq, title, hit_cnt, creator_id,
+				DATE_FORMAT(created_date, '%Y.%m.%d %H:%i:%s') AS created_date
+			FROM
+				t_blog
+			WHERE
+				deleted_yn = 'N'
+			ORDER BY
+				seq DESC
+		]]>
+	</select>
+	
+	<insert id="vueInsertBoard" parameterType="btc.dto.AxiosBoardDto">
+		<![CDATA[
+			INSERT INTO
+				t_blog (title, contents, creator_id, created_date)
+			VALUES
+				(#{title}, #{contents}, 'tester1', NOW());
+		]]>
+	</insert>
+	
+	<select id="vueSelectDetailBoard" parameterType="int" resultType="btc.dto.AxiosBoardDto">
+		<![CDATA[
+			SELECT
+				seq, title, contents, hit_cnt, creator_id, updater_id,
+				DATE_FORMAT(created_date, '%Y%m%d %H:%i:$s') AS created_date,
+    			DATE_FORMAT(updated_date, '%Y%m%d %H:%i:$s') AS updated_date
+			FROM
+				t_blog
+			WHERE
+				seq = #{seq}
+		]]>
+	</select>
+	
+	<update id="vueUpdateBoard" parameterType="btc.dto.AxiosBoardDto">
+		<![CDATA[
+			UPDATE
+				t_blog
+			SET
+				title = #{title},
+				contents = #{contents}
+			WHERE
+				seq = #{seq}
+		]]>
+	</update>
+	
+	<update id="vueDeleteBoard" parameterType="int">
+		<![CDATA[
+			UPDATE
+				t_blog
+			SET
+				deleted_yn = 'Y'
+			WHERE
+				seq = #{seq}
+		]]>
+	</update>
+	
+	<!--<delete id="vueDeleteBoard" parameterType="int">
+		<![CDATA[
+			DELETE FROM
+				t_blog
+			WHERE
+				seq = #{seq}
+		]]>
+	</delete>-->
+	
+	<select id="replyList" parameterType="int" resultType="btc.dto.ReplyDto">
+		<![CDATA[
+			SELECT
+				seq, blog_seq, reple_seq, contents, creator_id,
+				DATE_FORMAT(created_date, '%Y.%m.%d %H:%i:%s') AS created_date
+			FROM
+				t_reply
+			WHERE
+				blog_seq = #{blogSeq}
+			AND
+				deleted_yn = 'N'
+			ORDER BY
+				seq DESC
+		]]>
+	</select>
+	
+	<insert id="replyInsert" parameterType="btc.dto.ReplyDto">
+		<![CDATA[
+			INSERT INTO
+				t_reply (blog_seq, contents, creator_id, created_date)
+			VALUES
+				(#{blogSeq}, #{contents}, #{creatorId}, NOW())
+		]]>
+	</insert>
+	
+	<update id="replyDelete" parameterType="int">
+		<![CDATA[
+			UPDATE
+				t_reply
+			SET
+				deleted_yn = 'Y'
+			WHERE
+				seq = #{seq}
+		]]>
+	</update>
+	
+</mapper>
